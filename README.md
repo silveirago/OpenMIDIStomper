@@ -120,6 +120,40 @@ _openMIDIStomper is an Arduino-based MIDI controller that provides customizable 
 - Check the Arduino IDE for any compilation errors.
 - Consult the serial monitor for debugging messages.
 
+### Instructions to Use the MIDI Message Configuration Code Editor
+
+1. **Configure the MIDI Messages:**
+   - The interface allows you to configure MIDI messages for up to 8 banks, each containing 8 buttons.
+   - Each button can send up to 5 different MIDI messages.
+   - For each message, you can specify the type (NN, CC, PC, T), the message number (0-127), and the MIDI channel (0-15).
+
+2. **Expand Sections:**
+   - Click on the "Bank" buttons to expand and configure each bank.
+   - Click on the "Button" buttons within each bank to expand and configure each button's messages.
+
+3. **Pre-fill Values:**
+   - By default, the first message for each button is set to Note Number (NN), with the number equal to the button index and the channel equal to the bank index.
+   - You can adjust these values as needed.
+
+4. **Copy Configuration:**
+   - Once you have configured the MIDI messages, click the "Copy Configuration to Clipboard" button.
+   - A message will appear indicating that the configuration has been copied to your clipboard.
+
+5. **Paste into Arduino Sketch:**
+   - Open your Arduino sketch in the Arduino IDE.
+   - Paste the copied configuration code into the appropriate section of your sketch.
+
+6. **Export and Import Bank Configurations:**
+   - To export a bank's configuration, click the "Export Bank Configuration" button for the desired bank. This will download a text file with the configuration.
+   - To import a bank's configuration, click the "Import Bank Configuration" button for the desired bank and select the previously exported configuration file.
+
+7. **Save and Upload:**
+   - Save the changes in your Arduino sketch.
+   - Upload the sketch to your Arduino board to use the configured MIDI messages.
+
+This HTML code editor provides a user-friendly interface to configure and manage MIDI messages, making it easy to set up your MIDI controller.
+
+
 ## Contributing
 
 Feel free to contribute to this project by submitting issues or pull requests. Any improvements or bug fixes are welcome.
