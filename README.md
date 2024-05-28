@@ -48,8 +48,19 @@ _openMIDIStomper is an Arduino-based MIDI controller that provides customizable 
    - Connect the other two terminals to 5V and ground, respectively.
 
 3. **LEDs:**
-   - Connect the anode (long leg) of each LED to a digital pin on the Arduino through a current-limiting resistor.
-   - Connect the cathode (short leg) to ground.
+#### Pins Used
+- **Pins**:  2, 3, 4, 5, 6, 7, 8, 9
+
+#### Connecting LEDs
+
+- **LED 1 (D1)**: Connect the anode to pin 2 through a 220Ω resistor and the cathode to ground.
+- **LED 2 (D2)**: Connect the anode to pin 3 through a 220Ω resistor and the cathode to ground.
+- **LED 3 (D3)**: Connect the anode to pin 4 through a 220Ω resistor and the cathode to ground.
+- **LED 4 (D4)**: Connect the anode to pin 5 through a 220Ω resistor and the cathode to ground.
+- **LED 5 (D5)**: Connect the anode to pin 6 through a 220Ω resistor and the cathode to ground.
+- **LED 6 (D6)**: Connect the anode to pin 7 through a 220Ω resistor and the cathode to ground.
+- **LED 7 (D7)**: Connect the anode to pin 8 through a 220Ω resistor and the cathode to ground.
+- **LED 8 (D8)**: Connect the anode to pin 9 through a 220Ω resistor and the cathode to ground.
 
 ### Button Matrix
 
@@ -58,20 +69,6 @@ _openMIDIStomper is an Arduino-based MIDI controller that provides customizable 
 - **Columns**: Pins 21, 20, 19, and 16
 
 #### Wiring Diagram
-```
-Button Matrix (2x4)
-
-  Row1 (Pin 15)  Row2 (Pin 14)
-     |               |
-  +---+---+---+---+  +---+---+---+---+
-  | B1  | B2  | B3  | B4  | B5  | B6  | B7  | B8  |
-  |     |     |     |     |     |     |     |     |
-  +---+---+---+---+  +---+---+---+---+
-     |     |     |     |     |     |     |     |
-     |     |     |     |     |     |     |     |
-Column1 (Pin 21) Column2 (Pin 20) Column3 (Pin 19) Column4 (Pin 16)
-
-```
 
 - **Button 1 (B1)**: Connect one terminal to pin 15 (Row1) and the other terminal to pin 21 (Column1).
 - **Button 2 (B2)**: Connect one terminal to pin 15 (Row1) and the other terminal to pin 20 (Column2).
