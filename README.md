@@ -120,7 +120,7 @@ _openMIDIStomper is an Arduino-based MIDI controller that provides customizable 
 - Check the Arduino IDE for any compilation errors.
 - Consult the serial monitor for debugging messages.
 
-### Instructions to Use the MIDI Message Configuration Code Editor
+## Instructions to Use the MIDI Message Configuration Code Editor
 
 1. **Configure the MIDI Messages:**
    - The interface allows you to configure MIDI messages for up to 8 banks, each containing 8 buttons.
