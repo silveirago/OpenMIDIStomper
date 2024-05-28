@@ -48,8 +48,8 @@ _openMIDIStomper is an Arduino-based MIDI controller that provides customizable 
    - Connect the other two terminals to 5V and ground, respectively.
 
 3. **LEDs:**
-#### Pins Used
-- **Pins**:  2, 3, 4, 5, 6, 7, 8, 9
+
+   - **Pins**:  2, 3, 4, 5, 6, 7, 8, 9
 
 #### Connecting LEDs
 
