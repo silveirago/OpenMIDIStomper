@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MIDI Message Configuration</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f5;
+            color: #333;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #444;
+        }
+        p.description {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #666;
+        }
+        .collapsible {
+            background-color: #444;
+            color: white;
+            cursor: pointer;
+            padding: 12px 20px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 16px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        .active, .collapsible:hover {
+            background-color: #333;
+        }
+        .content {
+            padding: 0 18px;
+            display: none;
+            overflow: hidden;
+            background-color: #f9f9f9;
+            margin: 10px 0;
+            border-left: 4px solid #444;
+            border-radius: 8px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+        input[type="text"], select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        .button-container {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .button-container button {
+            padding: 8px 16px;
+            font-size: 14px;
+            background-color: #666;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            flex: 1;
+        }
+        .button-container button:hover {
+            background-color: #333;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #333;
+        }
+        .copy-alert {
+            display: none;
+            color: green;
+            margin-top: 10px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+<h2>MIDI Message Configuration</h2>
+<p class="description" style="text-align: justify; text-justify: inter-word; line-height: 1.4;">
+    <b>Choose the type of message:</b><br>
+    NN - Note Number<br>
+    CC - Control Change<br>
+    PC - Program Change<br>
+    T - Note Number in Toggle Mode<br>
+    <b>The Message Number:</b> <br>
+    0-127<br>
+    <b>The MIDI Channel:</b><br>
+    0-15<br>
+</p>
+
+<div id="configurator"></div>
+<button onclick="copyConfig()">Copy Configuration to Clipboard</button>
+<p class="copy-alert">Configuration copied to clipboard. Paste it into your Arduino sketch.</p>
+
+<p class="footer">
+    by Gustavo Silveira<br>
+    a.k.a. the Nerd Musician<br>
+    <a href="http://go.musiconerd.com" target="_blank">go.musiconerd.com</a>
+</p>
+
+<script>
+    const N_BANKS = 8;
+    const N_BUTTONS = 8;
+    const N_MESSAGES = 5;
+    const messageTypes = ['NN', 'CC', 'PC', 'T'];
+
+    function createConfigurator() {
+        const configurator = document.getElementById('configurator');
+        for (let bank = 1; bank <= N_BANKS; bank++) {
+            const bankBtn = document.createElement('button');
+            bankBtn.className = 'collapsible';
+            bankBtn.innerHTML = `Bank ${bank}`;
+            configurator.appendChild(bankBtn);
+
+            const bankContent = document.createElement('div');
+            bankContent.className = 'content';
+            configurator.appendChild(bankContent);
+
+            const buttonContainer = document.createElement('div');
+            buttonContainer.className = 'button-container';
+            bankContent.appendChild(buttonContainer);
+
+            const exportButton = document.createElement('button');
+            exportButton.innerHTML = 'Export Bank Configuration';
+            exportButton.onclick = () => exportConfig(bank);
+            buttonContainer.appendChild(exportButton);
+
+            const importButton = document.createElement('button');
+            importButton.innerHTML = 'Import Bank Configuration';
+            importButton.onclick = () => importConfig(bank);
+            buttonContainer.appendChild(importButton);
+
+            for (let btn = 1; btn <= N_BUTTONS; btn++) {
+                const buttonBtn = document.createElement('button');
+                buttonBtn.className = 'collapsible';
+                buttonBtn.innerHTML = `Button ${btn}`;
+                bankContent.appendChild(buttonBtn);
+
+                const buttonContent = document.createElement('div');
+                buttonContent.className = 'content';
+                bankContent.appendChild(buttonContent);
+
+                for (let msg = 1; msg <= N_MESSAGES; msg++) {
+                    const formGroup = document.createElement('div');
+                    formGroup.className = 'form-group';
+                    buttonContent.appendChild(formGroup);
+
+                    const label = document.createElement('label');
+                    label.innerHTML = `Message ${msg}`;
+                    formGroup.appendChild(label);
+
+                    const typeLabel = document.createElement('label');
+                    typeLabel.innerHTML = 'Type:';
+                    formGroup.appendChild(typeLabel);
+
+                    const typeSelect = document.createElement('select');
+                    typeSelect.id = `type_${bank}_${btn}_${msg}`;
+                    for (const type of messageTypes) {
+                        const option = document.createElement('option');
+                        option.value = type;
+                        option.innerHTML = type;
+                        typeSelect.appendChild(option);
+                    }
+                    formGroup.appendChild(typeSelect);
+
+                    const numLabel = document.createElement('label');
+                    numLabel.innerHTML = 'Number:';
+                    formGroup.appendChild(numLabel);
+
+                    const numInput = document.createElement('input');
+                    numInput.type = 'text';
+                    numInput.id = `val_${bank}_${btn}_${msg}`;
+                    numInput.placeholder = `Number (e.g., 60)`;
+                    formGroup.appendChild(numInput);
+
+                    const chLabel = document.createElement('label');
+                    chLabel.innerHTML = 'Channel:';
+                    formGroup.appendChild(chLabel);
+
+                    const chInput = document.createElement('input');
+                    chInput.type = 'text';
+                    chInput.id = `ch_${bank}_${btn}_${msg}`;
+                    chInput.placeholder = `Channel (e.g., 1)`;
+                    formGroup.appendChild(chInput);
+
+                    // Pre-fill the values
+                    if (msg == 1) {
+                        typeSelect.value = 'NN';
+                        numInput.value = btn - 1;
+                        chInput.value = bank - 1;
+                    } else {
+                        typeSelect.value = 'NN';
+                        numInput.value = -1;
+                        chInput.value = bank - 1;
+                    }
+                }
+            }
+        }
+
+        // Add event listeners for collapsible elements
+        const coll = document.getElementsByClassName('collapsible');
+        for (let i = 0; i < coll.length; i++) {
+            coll[i].addEventListener('click', function () {
+                this.classList.toggle('active');
+                const content = this.nextElementSibling;
+                if (content.style.display === 'block') {
+                    content.style.display = 'none';
+                } else {
+                    content.style.display = 'block';
+                }
+            });
+        }
+    }
+
+    function copyConfig() {
+        let configStr = '';
+
+        for (let bank = 1; bank <= N_BANKS; bank++) {
+            for (let btn = 1; btn <= N_BUTTONS; btn++) {
+                for (let msg = 1; msg <= N_MESSAGES; msg++) {
+                    const type = document.getElementById(`type_${bank}_${btn}_${msg}`).value;
+                    const num = document.getElementById(`val_${bank}_${btn}_${msg}`).value;
+                    const ch = document.getElementById(`ch_${bank}_${btn}_${msg}`).value;
+                    configStr += `MESSAGE_TYPE[${bank - 1}][${btn - 1}][${msg - 1}] = ${type};\n`;
+                    configStr += `MESSAGE_VAL[${bank - 1}][${btn - 1}][${msg - 1}] = ${num};\n`;
+                    configStr += `MESSAGE_CH[${bank - 1}][${btn - 1}][${msg - 1}] = ${ch};\n`;
+                }
+            }
+        }
+
+        navigator.clipboard.writeText(configStr).then(() => {
+            document.querySelector('.copy-alert').style.display = 'block';
+        });
+    }
+
+    function exportConfig(bank) {
+        let bankConfig = '';
+
+        for (let btn = 1; btn <= N_BUTTONS; btn++) {
+            for (let msg = 1; msg <= N_MESSAGES; msg++) {
+                const type = document.getElementById(`type_${bank}_${btn}_${msg}`).value;
+                const num = document.getElementById(`val_${bank}_${btn}_${msg}`).value;
+                const ch = document.getElementById(`ch_${bank}_${btn}_${msg}`).value;
+                bankConfig += `MESSAGE_TYPE[${bank - 1}][${btn - 1}][${msg - 1}] = ${type};\n`;
+                bankConfig += `MESSAGE_VAL[${bank - 1}][${btn - 1}][${msg - 1}] = ${num};\n`;
+                bankConfig += `MESSAGE_CH[${bank - 1}][${btn - 1}][${msg - 1}] = ${ch};\n`;
+            }
+        }
+
+        const blob = new Blob([bankConfig], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `bank_${bank}_config.txt`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function importConfig(bank) {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.txt';
+
+        input.onchange = event => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const lines = e.target.result.split('\n');
+                    lines.forEach(line => {
+                        const match = line.match(/MESSAGE_(TYPE|VAL|CH)\[(\d+)\]\[(\d+)\]\[(\d+)\] = (\w+);/);
+                        if (match) {
+                            const [, key, b, btn, msg, value] = match;
+                            if (parseInt(b) === bank - 1) {
+                                if (key === 'TYPE') {
+                                    document.getElementById(`type_${bank}_${parseInt(btn) + 1}_${parseInt(msg) + 1}`).value = value;
+                                } else if (key === 'VAL') {
+                                    document.getElementById(`val_${bank}_${parseInt(btn) + 1}_${parseInt(msg) + 1}`).value = value;
+                                } else if (key === 'CH') {
+                                    document.getElementById(`ch_${bank}_${parseInt(btn) + 1}_${parseInt(msg) + 1}`).value = value;
+                                }
+                            }
+                        }
+                    });
+                };
+                reader.readAsText(file);
+            }
+        };
+
+        input.click();
+    }
+
+    createConfigurator();
+</script>
+
+</body>
+</html>
