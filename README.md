@@ -153,42 +153,6 @@ _openMIDIStomper is an Arduino-based MIDI controller that provides customizable 
 
 This HTML code editor provides a user-friendly interface to configure and manage MIDI messages, making it easy to set up your MIDI controller.
 
-
-# OpenMIDI Stomper
-
-Welcome to the OpenMIDI Stomper project! This is a DIY MIDI pedal board that allows musicians to control MIDI devices using footswitches. This repository contains the code, schematics, and documentation to build your own MIDI pedal board and customize it with different presets.
-
-## Features
-
-- Easy to build and customize.
-- Supports multiple presets that can be edited via a web browser.
-- Allows users to upload and share their own presets.
-- Open source and community-driven.
-
-## Installation
-
-To get started with the OpenMIDI Stomper, follow these steps:
-
-1. **Clone the Repository**:
-   \`\`\`sh
-   git clone https://github.com/YOUR-USERNAME/OpenMIDI-Stomper.git
-   cd OpenMIDI-Stomper
-   \`\`\`
-
-2. **Build the Hardware**:
-   - Follow the instructions in the \`schematics\` directory to build your MIDI pedal board.
-
-3. **Upload the Firmware**:
-   - Use the provided code in the \`firmware\` directory to upload the firmware to your pedal board.
-
-4. **Set Up the Web Editor**:
-   - Follow the instructions in the \`web-editor\` directory to set up the web-based preset editor.
-
-## Usage
-
-1. **Connect the Pedal Board**:
-   - Connect your MIDI pedal board to your computer or MIDI device.
-
 ## How to Upload Your Presets
 
 ### Method 1: Using GitHub Issues
