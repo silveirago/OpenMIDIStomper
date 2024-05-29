@@ -154,6 +154,117 @@ _openMIDIStomper is an Arduino-based MIDI controller that provides customizable 
 This HTML code editor provides a user-friendly interface to configure and manage MIDI messages, making it easy to set up your MIDI controller.
 
 
+# OpenMIDI Stomper
+
+Welcome to the OpenMIDI Stomper project! This is a DIY MIDI pedal board that allows musicians to control MIDI devices using footswitches. This repository contains the code, schematics, and documentation to build your own MIDI pedal board and customize it with different presets.
+
+## Features
+
+- Easy to build and customize.
+- Supports multiple presets that can be edited via a web browser.
+- Allows users to upload and share their own presets.
+- Open source and community-driven.
+
+## Installation
+
+To get started with the OpenMIDI Stomper, follow these steps:
+
+1. **Clone the Repository**:
+   \`\`\`sh
+   git clone https://github.com/YOUR-USERNAME/OpenMIDI-Stomper.git
+   cd OpenMIDI-Stomper
+   \`\`\`
+
+2. **Build the Hardware**:
+   - Follow the instructions in the \`schematics\` directory to build your MIDI pedal board.
+
+3. **Upload the Firmware**:
+   - Use the provided code in the \`firmware\` directory to upload the firmware to your pedal board.
+
+4. **Set Up the Web Editor**:
+   - Follow the instructions in the \`web-editor\` directory to set up the web-based preset editor.
+
+## Usage
+
+1. **Connect the Pedal Board**:
+   - Connect your MIDI pedal board to your computer or MIDI device.
+
+## How to Upload Your Presets
+
+### Method 1: Using GitHub Issues
+
+1. **Go to the Issues Tab**: Navigate to the Issues tab of the repository.
+
+2. **Create a New Issue**:
+    - Click on the "New Issue" button.
+    - Provide a descriptive title for your issue, such as "New Preset: [Preset Name]".
+    - In the description, provide any relevant details about your preset.
+
+3. **Attach Your Preset File**:
+    - Drag and drop your preset file into the issue description area or click the "Attach files by dragging & dropping, selecting or pasting them." link.
+    - Ensure the file uploads successfully.
+
+4. **Submit the Issue**:
+    - Click the "Submit new issue" button to create the issue.
+
+Thank you! We will review your preset and integrate it into the repository.
+
+### Method 2: Using Pull Requests (Advanced Users)
+
+1. **Fork the Repository**:
+    - Click the "Fork" button at the top right of the repository page to create a copy of the repository under your GitHub account.
+
+2. **Clone the Repository**:
+    - Clone your forked repository to your local machine using the following command:
+      \`\`\`sh
+      git clone https://github.com/YOUR-USERNAME/REPOSITORY-NAME.git
+      \`\`\`
+    - Replace \`YOUR-USERNAME\` with your GitHub username and \`REPOSITORY-NAME\` with the name of the repository.
+
+3. **Create a New Branch**:
+    - Navigate to the repository directory on your local machine:
+      \`\`\`sh
+      cd REPOSITORY-NAME
+      \`\`\`
+    - Create a new branch for your changes:
+      \`\`\`sh
+      git checkout -b new-preset-branch
+      \`\`\`
+
+4. **Add Your Preset File**:
+    - Add your preset file to the appropriate directory (e.g., \`presets/\`):
+      \`\`\`sh
+      cp /path/to/your/preset/file presets/
+      \`\`\`
+
+5. **Commit Your Changes**:
+    - Stage your changes:
+      \`\`\`sh
+      git add presets/your-preset-file
+      \`\`\`
+    - Commit your changes with a descriptive message:
+      \`\`\`sh
+      git commit -m "Add new preset: [Preset Name]"
+      \`\`\`
+
+6. **Push Your Changes**:
+    - Push your changes to your forked repository:
+      \`\`\`sh
+      git push origin new-preset-branch
+      \`\`\`
+
+7. **Create a Pull Request**:
+    - Navigate to your forked repository on GitHub.
+    - Click the "Compare & pull request" button next to your new branch.
+    - Provide a descriptive title and description for your pull request.
+    - Click "Create pull request".
+
+We will review your pull request and merge it if everything looks good. Thank you for your contribution!
+
+Feel free to reach out via the [Discussions] https://github.com/silveirago/OpenMIDIStomper/discussions tab if you have any questions or need further assistance. Happy contributing!
+
+
+
 ## Contributing
 
 Feel free to contribute to this project by submitting issues or pull requests. Any improvements or bug fixes are welcome.
