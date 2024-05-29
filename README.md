@@ -243,7 +243,8 @@ Thank you to the open-source community for providing valuable resources and insp
 
 ## Support this Project
 
-This project was created for free by me, Gustavo Silveira, a.k.a. the Nerd Musician.
+This project was created by me, Gustavo Silveira, a.k.a. the Nerd Musician, for the community.
+
 If you want to support me, so I can keep doing projects like this, consider buying one of my DIY MIDI Controller courses: https://go.musiconerd.com/nerd-musician-pro
 
-Or PayPal me any ammount here:https://www.paypal.com/paypalme/nerdmusician
+Or PayPal me any ammount here: https://www.paypal.com/paypalme/nerdmusician
