@@ -180,42 +180,42 @@ Thank you! We will review your preset and integrate it into the repository.
 
 2. **Clone the Repository**:
     - Clone your forked repository to your local machine using the following command:
-      \`\`\`sh
+      ```sh
       git clone https://github.com/YOUR-USERNAME/REPOSITORY-NAME.git
-      \`\`\`
+      ```
     - Replace \`YOUR-USERNAME\` with your GitHub username and \`REPOSITORY-NAME\` with the name of the repository.
 
 3. **Create a New Branch**:
     - Navigate to the repository directory on your local machine:
-      \`\`\`sh
+      ```sh
       cd REPOSITORY-NAME
-      \`\`\`
+      ```
     - Create a new branch for your changes:
-      \`\`\`sh
+      ```sh
       git checkout -b new-preset-branch
-      \`\`\`
+      ```
 
 4. **Add Your Preset File**:
     - Add your preset file to the appropriate directory (e.g., \`presets/\`):
-      \`\`\`sh
+      ```sh
       cp /path/to/your/preset/file presets/
-      \`\`\`
+      ```
 
 5. **Commit Your Changes**:
     - Stage your changes:
-      \`\`\`sh
+      ```sh
       git add presets/your-preset-file
-      \`\`\`
+      ```
     - Commit your changes with a descriptive message:
-      \`\`\`sh
+      ```sh
       git commit -m "Add new preset: [Preset Name]"
-      \`\`\`
+      ```
 
 6. **Push Your Changes**:
     - Push your changes to your forked repository:
-      \`\`\`sh
+      ```sh
       git push origin new-preset-branch
-      \`\`\`
+      ```
 
 7. **Create a Pull Request**:
     - Navigate to your forked repository on GitHub.
