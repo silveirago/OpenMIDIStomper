@@ -9,7 +9,7 @@
 
 // Product name, Manufacturer, serial
 // Any argument can be left off, or NULL to keep the original Arduino name
-USBRename dummy = USBRename("Open MIDI Stomper", "Nerd Musician", "0002");
+USBRename dummy = USBRename("OpenMIDIStomper", "Nerd Musician", "0002");
 
 void setup() {
   Serial.begin(115200);  // For debugging

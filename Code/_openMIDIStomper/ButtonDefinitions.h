@@ -7,8 +7,8 @@
 #define NUM_ROWS 2
 #define NUM_COLS 4
 #define N_BUTTONS (NUM_COLS * NUM_ROWS)
-#define N_BANKS 8
-#define N_MESSAGES 10
+#define N_BANKS N_BUTTONS
+#define N_MESSAGES 5
 
 byte rowPins[NUM_ROWS] = { 15, 14 };          // Pins for rows
 byte colPins[NUM_COLS] = { 21, 20, 19, 16 };  // Pins for columns

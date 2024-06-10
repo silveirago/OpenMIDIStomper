@@ -10,6 +10,9 @@ _openMIDIStomper is an Arduino-based MIDI controller that provides customizable 
 - **LED Indicators:** Visual feedback using LEDs.
 - **Customizable Messages:** Define your own MIDI messages and configurations.
 
+## Watch the Youtube video here.
+[Link](https://youtu.be/yELnZdEJqS0)
+
 ## Getting Started
 
 ### Prerequisites
