@@ -2,7 +2,7 @@
 # OpenMIDIStomper
 
 ## Description
-_openMIDIStomper is an Arduino-based MIDI controller that provides customizable MIDI message sending capabilities using buttons, potentiometers, and LEDs. This project is designed to offer flexible control over MIDI devices for musicians and hobbyists.
+_openMIDIStomper is an Arduino-based MIDI foot controller that provides customizable MIDI message sending capabilities using buttons, potentiometers, and LEDs. It can control any DAW plugin since it's USB MIDI Class compliant. It features 8 stomp buttons and 8 LEDs, all housed in a Hammond aluminum enclosure. The pedalboard has 8 banks, and each button can send up to 5 different messages, configurable through a browser editor.
 
 ## Features
 - **Button Control:** Send MIDI messages using button presses.
@@ -10,7 +10,7 @@ _openMIDIStomper is an Arduino-based MIDI controller that provides customizable 
 - **LED Indicators:** Visual feedback using LEDs.
 - **Customizable Messages:** Define your own MIDI messages and configurations.
 
-## Watch the Youtube video here.
+## Watch the Youtube video here:
 [Link](https://youtu.be/yELnZdEJqS0)
 
 ## Getting Started
