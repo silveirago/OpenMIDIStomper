@@ -13,6 +13,15 @@ _openMIDIStomper is an Arduino-based MIDI foot controller that provides customiz
 ## Watch the Youtube video here:
 [Link](https://youtu.be/yELnZdEJqS0)
 
+## Material
+ - [1x Arduino Pro Micro](https://amzn.to/3Vg9KrE)
+ - [1x Solderable Breadboard](https://amzn.to/4egjUB1)
+ - [8x Stomp Buttons](https://amzn.to/3V9GrXu)
+ - [8x 5mm Leds](https://amzn.to/3xiPGN9) 
+ - [8x 5mm LED Holders](https://amzn.to/4aT8Reh)
+ - [2x 1/4" Stereo Socket](https://amzn.to/4aYbtaX)
+ - [1x Hammond Enclosure](https://www.aliexpress.us/item/3256805426594939.html?spm=a2g0o.order_list.order_list_main.16.2f1d1802LzhFR0&gatewayAdapt=glo2usa4itemAdapt)
+
 ## Getting Started
 
 ### Prerequisites
