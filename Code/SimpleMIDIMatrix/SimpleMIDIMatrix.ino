@@ -1,74 +1,67 @@
 // =============================================================================
 //  SimpleMIDIMatrix.ino
-//  A minimal, self-contained MIDI firmware for the OpenMIDIStomper hardware.
+//  Minimal MIDI matrix firmware for OpenMIDIStomper hardware.
 //
-//  Hardware: Arduino Pro Micro (ATmega32U4)
-//  MIDI lib : MIDIUSB (built-in for 32U4 boards)
+//  Default behavior:
+//    - 8 buttons send Control Change messages
+//    - MIDI Channel 16
+//    - CC numbers 102–109
 //
-//  Matrix  : 2 rows × 4 columns = 8 buttons
-//  LEDs    : 8 individual LEDs, one per button (active HIGH)
-//  Buttons : active LOW (INPUT_PULLUP on columns; rows driven LOW to scan)
-//
-//  Behaviour:
-//    - Button press  → Note On  (velocity 127)
-//    - Button release → Note Off (velocity 0)
-//    - Incoming Note On  (vel > 0) → turns matching LED on
-//    - Incoming Note Off (vel = 0) → turns matching LED off
-//    - Local LED mirrors button state immediately on press/release
-//
-//  Isolation:
-//    This file is completely self-contained. It shares no headers,
-//    no globals, and no state with the original firmware in
-//    Code/_openMIDIStomper/ or Code/_openMIDIStomper_2/.
-//    Opening this folder in the Arduino IDE loads only this sketch.
+//  Note support is still kept in the code.
 // =============================================================================
 
 #include <MIDIUSB.h>
 
 // ---------------------------------------------------------------------------
 //  USER-CONFIGURABLE SECTION
-//  Change pins, notes, channel, and debounce delay here.
 // ---------------------------------------------------------------------------
 
-// MIDI channel (1–16). The library uses 0-based internally, so we subtract 1
-// when sending. Leave MIDI_CHANNEL as a human-readable 1-based value.
-const byte MIDI_CHANNEL = 1;
+const byte MIDI_CHANNEL = 16;
 
-// Button matrix pins
-//   rowPins  : set OUTPUT, driven LOW one at a time to activate a row.
-//   colPins  : set INPUT_PULLUP; reads LOW when button in active row is pressed.
-const byte rowPins[2] = { 15, 14 };           // Row 0 = pin 15, Row 1 = pin 14
-const byte colPins[4] = { 21, 20, 19, 16 };   // Col 0..3
+const byte rowPins[2] = { 15, 14 };
+const byte colPins[4] = { 21, 20, 19, 16 };
 
-// LED pins (one per button, active HIGH).
-// Button index = row * 4 + col  →  same order as the note table below.
-//   Button 1 (row0,col0) → ledPins[0] = pin 2
-//   Button 2 (row0,col1) → ledPins[1] = pin 3
-//   ...
-//   Button 8 (row1,col3) → ledPins[7] = pin 9
 const byte ledPins[8] = { 2, 3, 4, 5, 6, 7, 8, 9 };
 
-// MIDI note numbers, one per button (index 0..7 matches button 1..8).
-const byte noteNumbers[8] = { 36, 37, 38, 39, 40, 41, 42, 43 };
+enum MidiMessageType {
+  MIDI_NOTE,
+  MIDI_CC
+};
 
-// Debounce delay in milliseconds.
+// Default: all buttons send CC.
+// To make a button send a note, change MIDI_CC to MIDI_NOTE for that index.
+const MidiMessageType buttonTypes[8] = {
+  MIDI_CC,
+  MIDI_CC,
+  MIDI_CC,
+  MIDI_CC,
+  MIDI_CC,
+  MIDI_CC,
+  MIDI_CC,
+  MIDI_CC
+};
+
+// If buttonTypes[i] is MIDI_CC, this is the CC number.
+// If buttonTypes[i] is MIDI_NOTE, this is the note number.
+const byte midiNumbers[8] = {
+  102, 103, 104, 105,
+  106, 107, 108, 109
+};
+
+const byte NOTE_ON_VELOCITY = 127;
+
+const byte CC_ON_VALUE = 127;
+const byte CC_OFF_VALUE = 0;
+
 const unsigned long DEBOUNCE_MS = 10;
 
 // ---------------------------------------------------------------------------
-//  INTERNAL STATE  (do not edit unless you know what you're doing)
+//  INTERNAL STATE
 // ---------------------------------------------------------------------------
 
-// Current and previous debounced button states (1 = pressed, 0 = released).
-byte buttonCurrentState[8]  = { 0 };
-byte buttonPreviousState[8] = { 0 };
-
-// Timestamp of the last state change per button, for debounce.
+byte buttonCurrentState[8] = { 0 };
 unsigned long lastDebounceTime[8] = { 0 };
-
-// Raw reading before debounce (updated every scan, compared after DEBOUNCE_MS).
 byte rawState[8] = { 0 };
-
-// LED state: 1 = on, 0 = off.  Tracks both local presses and MIDI feedback.
 byte ledState[8] = { 0 };
 
 // ---------------------------------------------------------------------------
@@ -76,18 +69,15 @@ byte ledState[8] = { 0 };
 // ---------------------------------------------------------------------------
 
 void setup() {
-  // Row pins: OUTPUT, idle HIGH (a row is activated by pulling it LOW).
   for (int r = 0; r < 2; r++) {
     pinMode(rowPins[r], OUTPUT);
     digitalWrite(rowPins[r], HIGH);
   }
 
-  // Column pins: INPUT_PULLUP (reads LOW when button connects col to active row).
   for (int c = 0; c < 4; c++) {
     pinMode(colPins[c], INPUT_PULLUP);
   }
 
-  // LED pins: OUTPUT, all off initially.
   for (int i = 0; i < 8; i++) {
     pinMode(ledPins[i], OUTPUT);
     digitalWrite(ledPins[i], LOW);
@@ -99,8 +89,8 @@ void setup() {
 // ---------------------------------------------------------------------------
 
 void loop() {
-  scanMatrix();       // Detect presses/releases → send MIDI, update LEDs.
-  readMidiInput();    // Handle incoming MIDI → update LEDs.
+  scanMatrix();
+  readMidiInput();
 }
 
 // ---------------------------------------------------------------------------
@@ -109,100 +99,102 @@ void loop() {
 
 void scanMatrix() {
   for (int row = 0; row < 2; row++) {
-    // Activate this row.
     digitalWrite(rowPins[row], LOW);
 
     for (int col = 0; col < 4; col++) {
-      int idx = row * 4 + col;          // Button index 0..7
+      int idx = row * 4 + col;
       byte reading = (digitalRead(colPins[col]) == LOW) ? 1 : 0;
 
-      // Debounce: only accept a change if the raw reading has been stable
-      // for at least DEBOUNCE_MS milliseconds.
       if (reading != rawState[idx]) {
-        // The pin changed; restart the debounce timer.
         lastDebounceTime[idx] = millis();
         rawState[idx] = reading;
       }
 
       if ((millis() - lastDebounceTime[idx]) >= DEBOUNCE_MS) {
-        // The reading is stable. Check for edge (state change).
         if (reading != buttonCurrentState[idx]) {
           buttonCurrentState[idx] = reading;
 
           if (reading == 1) {
-            // --- PRESS EDGE ---
-            sendNoteOn(noteNumbers[idx]);
+            sendButtonOn(idx);
             setLED(idx, 1);
           } else {
-            // --- RELEASE EDGE ---
-            sendNoteOff(noteNumbers[idx]);
+            sendButtonOff(idx);
             setLED(idx, 0);
           }
         }
       }
     }
 
-    // Deactivate this row before moving to the next.
     digitalWrite(rowPins[row], HIGH);
   }
 }
 
 // ---------------------------------------------------------------------------
-//  INCOMING MIDI HANDLER (MIDI feedback → LED control)
+//  INCOMING MIDI HANDLER
 // ---------------------------------------------------------------------------
 
 void readMidiInput() {
   midiEventPacket_t rx;
 
-  // Drain all available MIDI packets in this loop iteration.
   do {
     rx = MidiUSB.read();
 
     if (rx.header != 0) {
       byte statusByte = rx.byte1;
-      byte msgType    = statusByte & 0xF0;  // Upper nibble: message type
-      byte channel    = statusByte & 0x0F;  // Lower nibble: channel (0-based)
-      byte note       = rx.byte2;
-      byte velocity   = rx.byte3;
+      byte msgType = statusByte & 0xF0;
+      byte channel = statusByte & 0x0F;
+      byte number = rx.byte2;
+      byte value = rx.byte3;
 
-      // We only care about our MIDI channel.
-      // MIDI_CHANNEL is 1-based; channel from packet is 0-based.
       if (channel != (MIDI_CHANNEL - 1)) continue;
 
       if (msgType == 0x90) {
-        // Note On message.
-        if (velocity > 0) {
-          // Genuine Note On: find matching button and turn LED on.
-          setLEDForNote(note, 1);
-        } else {
-          // Note On with velocity 0 is equivalent to Note Off.
-          setLEDForNote(note, 0);
-        }
+        setLEDForMidiMessage(MIDI_NOTE, number, value > 0 ? 1 : 0);
       } else if (msgType == 0x80) {
-        // Note Off message.
-        setLEDForNote(note, 0);
+        setLEDForMidiMessage(MIDI_NOTE, number, 0);
+      } else if (msgType == 0xB0) {
+        setLEDForMidiMessage(MIDI_CC, number, value > 0 ? 1 : 0);
       }
     }
   } while (rx.header != 0);
 }
 
 // ---------------------------------------------------------------------------
+//  BUTTON MIDI DISPATCH
+// ---------------------------------------------------------------------------
+
+void sendButtonOn(int idx) {
+  if (buttonTypes[idx] == MIDI_NOTE) {
+    sendNoteOn(midiNumbers[idx]);
+  } else {
+    sendControlChange(midiNumbers[idx], CC_ON_VALUE);
+  }
+}
+
+void sendButtonOff(int idx) {
+  if (buttonTypes[idx] == MIDI_NOTE) {
+    sendNoteOff(midiNumbers[idx]);
+  } else {
+    sendControlChange(midiNumbers[idx], CC_OFF_VALUE);
+  }
+}
+
+// ---------------------------------------------------------------------------
 //  MIDI OUTPUT HELPERS
 // ---------------------------------------------------------------------------
 
-// Send Note On: channel is 0-based inside the packet.
 void sendNoteOn(byte note) {
   midiEventPacket_t pkt = {
     0x09,
     (uint8_t)(0x90 | (MIDI_CHANNEL - 1)),
     note,
-    127
+    NOTE_ON_VELOCITY
   };
+
   MidiUSB.sendMIDI(pkt);
   MidiUSB.flush();
 }
 
-// Send Note Off: velocity 0, channel is 0-based inside the packet.
 void sendNoteOff(byte note) {
   midiEventPacket_t pkt = {
     0x08,
@@ -210,6 +202,19 @@ void sendNoteOff(byte note) {
     note,
     0
   };
+
+  MidiUSB.sendMIDI(pkt);
+  MidiUSB.flush();
+}
+
+void sendControlChange(byte ccNumber, byte value) {
+  midiEventPacket_t pkt = {
+    0x0B,
+    (uint8_t)(0xB0 | (MIDI_CHANNEL - 1)),
+    ccNumber,
+    value
+  };
+
   MidiUSB.sendMIDI(pkt);
   MidiUSB.flush();
 }
@@ -218,16 +223,14 @@ void sendNoteOff(byte note) {
 //  LED HELPERS
 // ---------------------------------------------------------------------------
 
-// Set the LED for button index idx to state (1 = on, 0 = off).
 void setLED(int idx, byte state) {
   ledState[idx] = state;
   digitalWrite(ledPins[idx], state ? HIGH : LOW);
 }
 
-// Search through noteNumbers[] for a matching note and update its LED.
-void setLEDForNote(byte note, byte state) {
+void setLEDForMidiMessage(MidiMessageType type, byte number, byte state) {
   for (int i = 0; i < 8; i++) {
-    if (noteNumbers[i] == note) {
+    if (buttonTypes[i] == type && midiNumbers[i] == number) {
       setLED(i, state);
     }
   }
