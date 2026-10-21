@@ -20,7 +20,7 @@ _openMIDIStomper is an Arduino-based MIDI foot controller that provides customiz
  - [8x 5mm Leds](https://amzn.to/3xiPGN9) 
  - [8x 5mm LED Holders](https://amzn.to/4aT8Reh)
  - [2x 1/4" Stereo Socket](https://amzn.to/4aYbtaX)
- - [1x Hammond Enclosure](https://www.aliexpress.com/w/wholesale-1590DD-188X120X37mm.html?spm=a2g0o.home.search.0)
+ - [1x Hammond Enclosure 1590DD 188X120X37mm](https://www.aliexpress.com/w/wholesale-1590DD-188X120X37mm.html?spm=a2g0o.home.search.0)
 
 ## Getting Started
 
